@@ -1,9 +1,25 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from .models import Greeting
+from datetime import datetime, timedelta
+
+from .forms import Calendar
+from .models import UserSkif
 
 # Create your views here.
 def index(request):
     # return HttpResponse('Hello from Python!')
-    return render(request, 'index.html')
+    form = Calendar()
+    current_wd = 3
+    current_md = 14
+
+    date = datetime(year=2016, month=3, day=17)
+
+    form.days = []
+    for i in range(form.days_on_page):
+    	form.days.append({'day_of_week': form.weekdays[date.weekday()], 'day_of_month': date.day })
+    	date = date + timedelta(days=1)
+
+    form.users = UserSkif.objects.all()
+    
+    return render(request, 'index.html', {'form': form})
