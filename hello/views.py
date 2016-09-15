@@ -25,3 +25,17 @@ def index(request):
     form.users = UserSkif.objects.all()
     
     return render(request, 'index.html', {'form': form})
+
+def create_post(request):
+    if request.method == 'POST':
+        post_text = request.POST.get('the_post')
+        response_data = {}
+        print("------------------------------------------------------------------")
+        print(post_text)
+        
+        print("------------------------------------------------------------------")
+        
+
+        return index(request)
+    else:
+        return index(request)
