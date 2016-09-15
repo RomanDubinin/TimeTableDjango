@@ -9,28 +9,36 @@
   </div>
 </div>
 
-<ul class="weekdays">
-  {% for day in form.days %}
-    <li>{{ day.day_of_week }}</li>
+<table>
+  <tr>
+    <td>...</td>
+
+        {% for day in form.days %}
+          <td>{{ day.day_of_week }}</td>
+        {% endfor %}
+
+    
+  </tr>
+  <tr>
+    <td>...</td>
+      
+        {% for day in form.days %}
+          <td>{{ day.day_of_month }}</td>
+        {% endfor %}
+      
+  </tr>
+
+  {% for user in form.users %}
+    <tr>
+    <td>
+      {{ user.name }}
+    </td>
+    </tr>
   {% endfor %}
-  {% for day in form.days %}
-    <li>{{ day.day_of_month }}</li>
-  {% endfor %}
-</ul>
-{% for user in form.users %}
-    <li>{{ user.name }}</li>
-  {% endfor %}
-<ul class="cells"> 
-  <li>1</li>
-  <li>2</li>
-  <li>3</li>
-  <li>4</li>
-  <li>5</li>
-  <li>6</li>
-  <li>7</li>
-  <li>8</li>
-  <li>9</li>
-  <li><span class="active">10</span></li>
-  <li>11</li>
-</ul>
+
+</table>
+
+
+
+
 {% endblock %}
