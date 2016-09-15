@@ -23,6 +23,5 @@ def index(request):
     	date = date + timedelta(days=1)
 
     form.users = UserSkif.objects.all()
-    print(form.users[0].getdays())
     
     return render(request, 'index.html', {'form': form})
