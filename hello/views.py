@@ -28,11 +28,12 @@ def index(request):
 
 def create_post(request):
     if request.method == 'POST':
-        post_text = request.POST.get('the_post')
+        x = request.POST.get('x')
+        y = request.POST.get('y')
         response_data = {}
         print("------------------------------------------------------------------")
-        print(post_text)
-        
+        print(x)
+        print(y)
         print("------------------------------------------------------------------")
         
 
