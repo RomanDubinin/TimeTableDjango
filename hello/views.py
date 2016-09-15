@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 from .forms import Calendar
 from .models import UserSkif
 
+from django.conf import settings
+
 # Create your views here.
 def index(request):
     # return HttpResponse('Hello from Python!')
@@ -16,10 +18,11 @@ def index(request):
     date = datetime(year=2016, month=3, day=17)
 
     form.days = []
-    for i in range(form.days_on_page):
+    for i in range(settings.DAYS_ON_PAGE):
     	form.days.append({'day_of_week': form.weekdays[date.weekday()], 'day_of_month': date.day })
     	date = date + timedelta(days=1)
 
     form.users = UserSkif.objects.all()
+    print(form.users[0].getdays())
     
     return render(request, 'index.html', {'form': form})

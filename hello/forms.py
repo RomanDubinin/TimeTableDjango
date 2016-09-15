@@ -4,6 +4,5 @@ from django.contrib.auth.forms import UserCreationForm
 
 class Calendar(UserCreationForm):
 	weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-	days_on_page = 30
 	days = []
 	users = []

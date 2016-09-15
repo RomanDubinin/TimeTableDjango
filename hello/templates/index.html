@@ -33,6 +33,11 @@
     <td>
       {{ user.name }}
     </td>
+    {% for day in user.getdays %}
+      <td>
+        {{ day }}
+      </td>
+    {% endfor %}
     </tr>
   {% endfor %}
 

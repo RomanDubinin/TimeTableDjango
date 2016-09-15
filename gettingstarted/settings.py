@@ -138,3 +138,5 @@ STATICFILES_DIRS = (
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+DAYS_ON_PAGE = 30
+DAYS_WITH_SHEDULE = 10
