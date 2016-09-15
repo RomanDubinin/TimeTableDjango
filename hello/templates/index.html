@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<table>
+<table id='timetable'>
   <tr>
     <td>...</td>
 
@@ -51,7 +51,7 @@
 
 function send_coords(x, y) {
     $.ajax({
-        url : "create_post/", // the endpoint
+        url : "/", // the endpoint
         type : "POST", // http method
         data : { x : x,
                  y : y,
@@ -59,7 +59,12 @@ function send_coords(x, y) {
         
         // handle a successful response
         success : function(json) {
-            console.log("success"); // another sanity check
+            table = document.getElementById('timetable');
+            if((x >= {{MIN_X}}) && (y >= {{MIN_Y}}))
+              table.rows[y].cells[x].innerHTML = Math.floor(table.rows[y].cells[x].innerHTML) + 1;
+
+            
+            //location.reload();
         },
 
         // handle a non-successful response
@@ -74,5 +79,5 @@ $('td').click(function(){
 });
 
 </script>
-
+{{settings.MIN_X}}
 {% endblock %}

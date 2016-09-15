@@ -10,33 +10,27 @@ from django.conf import settings
 
 # Create your views here.
 def index(request):
-    # return HttpResponse('Hello from Python!')
     form = Calendar()
-    current_wd = 3
-    current_md = 14
 
     date = datetime(year=2016, month=3, day=17)
 
     form.days = []
     for i in range(settings.DAYS_ON_PAGE):
-    	form.days.append({'day_of_week': form.weekdays[date.weekday()], 'day_of_month': date.day })
-    	date = date + timedelta(days=1)
+        form.days.append({'day_of_week': form.weekdays[date.weekday()], 'day_of_month': date.day })
+        date = date + timedelta(days=1)
 
     form.users = UserSkif.objects.all()
+
+    if request.method == "POST":
+        x = int(request.POST.get('x'))
+        y = int(request.POST.get('y'))
+
+        if x >= settings.MIN_X and y >= settings.MIN_Y:
+            user = form.users[y-2]
+            days = user.getdays()
+            days[x-1] += 1
+            user.setdays(days)
+            user.save()
+            form.users = UserSkif.objects.all()
     
-    return render(request, 'index.html', {'form': form})
-
-def create_post(request):
-    if request.method == 'POST':
-        x = request.POST.get('x')
-        y = request.POST.get('y')
-        response_data = {}
-        print("------------------------------------------------------------------")
-        print(x)
-        print(y)
-        print("------------------------------------------------------------------")
-        
-
-        return index(request)
-    else:
-        return index(request)
+    return render(request, 'index.html', {'form': form, 'MIN_X':settings.MIN_X, 'MIN_Y':settings.MIN_Y})
