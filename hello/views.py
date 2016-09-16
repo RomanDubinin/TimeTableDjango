@@ -61,8 +61,20 @@ def index(request):
                   })
 
 def new_day(request):
-    users = UserSkif.objects.all()
+    users = list(UserSkif.objects.all())
     today = datetime.now()
+
+    users.sort(key = last_works_count)
+    wants =          [user for user in users if settings.STATES[user.getdays()[settings.DAYS_WITH_SHEDULE]] == "want"]
+    indifferentlys = [user for user in users if settings.STATES[user.getdays()[settings.DAYS_WITH_SHEDULE]] == "indifferently"]
+    sorted_users = wants + indifferentlys
+
+    for user in sorted_users[:2]:
+        days = user.getdays()
+        days[settings.DAYS_WITH_SHEDULE] = settings.WORK_STATE
+        user.setdays(days)
+        user.save()
+
     for user in users:
         last_works = user.get_last_works()
         if user.getdays()[0] == settings.WORK_STATE:
@@ -74,7 +86,7 @@ def new_day(request):
         days = user.getdays()
         user.setdays(shift(days))
         user.save()
-
+        
     return index(request)
 
 
@@ -98,3 +110,6 @@ def shift(arr):
     del arr[0]
     arr.append(0)
     return arr
+
+def last_works_count(user):
+    return len(user.get_last_works())
