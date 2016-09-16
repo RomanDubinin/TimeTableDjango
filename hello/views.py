@@ -48,7 +48,7 @@ def index(request):
     for user in form.users:
         states = numbers_to_stetes(user.getdays(), settings.STATES)
         user.setdays(states)
-        
+
     return render(request, 
                   'index.html', 
                   { 'form': form, 
@@ -58,8 +58,45 @@ def index(request):
                     'STATES_COUNT': settings.STATES_COUNT,
                   })
 
+def new_day(request):
+    users = UserSkif.objects.all()
+    today = datetime.now()
+    for user in users:
+        last_works = user.get_last_works()
+        if user.getdays()[0] == settings.WORK_STATE:
+            last_works.append(today)
+
+        handled_works = drop_very_last_works(last_works, today - settings.PERIOD_TO_STORAGE_WORKS)
+        print("-------------------------")
+        print(handled_works)
+        print("-------------------------")
+        user.set_last_works(handled_works)
+
+        days = user.getdays()
+        user.setdays(shift(days))
+        user.save()
+
+    return index(request)
+
+
+
+
 def numbers_to_stetes(arr, states):
     res = []
     for i in range(len(arr)):
         res.append(states[arr[i]])
     return res
+
+def drop_very_last_works(works, treshold):
+    handled_works = []
+
+    for work_date in works:
+        print(type(work_date))
+        if work_date >= treshold:
+            handled_works.append(work_date)
+    return handled_works
+
+def shift(arr):
+    del arr[0]
+    arr.append(0)
+    return arr

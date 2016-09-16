@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 import dj_database_url
 
+from datetime import datetime, timedelta
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -144,5 +146,7 @@ DAYS_WITH_SHEDULE = 10
 MIN_X = 1
 MIN_Y = 2
 
-STATES = ["indifferently", "not_want", "want"]
-STATES_COUNT = len(STATES)
+STATES = ["indifferently", "not_want", "want", "work"]
+STATES_COUNT = (len(STATES) - 1)
+WORK_STATE = (len(STATES) - 1)
+PERIOD_TO_STORAGE_WORKS = timedelta(days = 120)
