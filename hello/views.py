@@ -21,7 +21,9 @@ def index(request):
         form.days.append({'day_of_week': form.weekdays[date.weekday()], 'day_of_month': date.day })
         date = date + timedelta(days=1)
 
-    form.users = UserSkif.objects.all()
+    form.users = list(UserSkif.objects.all())
+    form.users.sort(key = user_name)
+
 
     if request.method == "POST":
         x = int(request.POST.get('x'))
@@ -86,7 +88,7 @@ def new_day(request):
         days = user.getdays()
         user.setdays(shift(days))
         user.save()
-        
+
     return index(request)
 
 
@@ -113,3 +115,6 @@ def shift(arr):
 
 def last_works_count(user):
     return len(user.get_last_works())
+
+def user_name(user):
+    return user.name

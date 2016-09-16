@@ -8,7 +8,7 @@ from datetime import datetime
 
 class UserSkif(models.Model):
     name = models.CharField(max_length=100)
-    days = models.CharField(max_length=1000, default='[]')
+    days = models.CharField(max_length=1000, default='[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]')
     last_works = models.CharField(max_length=100000, default='[]')
 
     def setdays(self, x):
