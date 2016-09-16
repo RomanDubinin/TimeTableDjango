@@ -35,14 +35,6 @@ def index(request):
             user.save()
             form.users = UserSkif.objects.all()
     
-        # return render(request, 
-        #               'index.html', 
-        #               { 'form': form, 
-        #                 'MIN_X':settings.MIN_X, 
-        #                 'MIN_Y':settings.MIN_Y, 
-        #                 'STATE': settings.STATES[days[x-1]],
-        #                 'STATES_COUNT': settings.STATES_COUNT,
-        #               })
         response_data = {'MIN_X':settings.MIN_X, 
                         'MIN_Y':settings.MIN_Y, 
                         'STATE': settings.STATES[days[x-1]],
@@ -53,6 +45,10 @@ def index(request):
             content_type="application/json"
         )
 
+    for user in form.users:
+        states = numbers_to_stetes(user.getdays(), settings.STATES)
+        user.setdays(states)
+        
     return render(request, 
                   'index.html', 
                   { 'form': form, 
@@ -61,3 +57,9 @@ def index(request):
                     'STATE': "1",
                     'STATES_COUNT': settings.STATES_COUNT,
                   })
+
+def numbers_to_stetes(arr, states):
+    res = []
+    for i in range(len(arr)):
+        res.append(states[arr[i]])
+    return res
