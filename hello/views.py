@@ -27,6 +27,7 @@ def index(request):
         x = int(request.POST.get('x'))
         y = int(request.POST.get('y'))
 
+        response_data = {}
         if x >= settings.MIN_X and y >= settings.MIN_Y:
             user = form.users[y-2]
             days = user.getdays()
@@ -35,11 +36,12 @@ def index(request):
             user.save()
             form.users = UserSkif.objects.all()
     
-        response_data = {'MIN_X':settings.MIN_X, 
-                        'MIN_Y':settings.MIN_Y, 
-                        'STATE': settings.STATES[days[x-1]],
-                        'STATES_COUNT': settings.STATES_COUNT,
-                        }
+            response_data = {'MIN_X':settings.MIN_X, 
+                            'MIN_Y':settings.MIN_Y, 
+                            'STATE': settings.STATES[days[x-1]],
+                            'STATES_COUNT': settings.STATES_COUNT,
+                            }
+
         return HttpResponse(
             json.dumps(response_data),
             content_type="application/json"
@@ -67,9 +69,6 @@ def new_day(request):
             last_works.append(today)
 
         handled_works = drop_very_last_works(last_works, today - settings.PERIOD_TO_STORAGE_WORKS)
-        print("-------------------------")
-        print(handled_works)
-        print("-------------------------")
         user.set_last_works(handled_works)
 
         days = user.getdays()
@@ -91,7 +90,6 @@ def drop_very_last_works(works, treshold):
     handled_works = []
 
     for work_date in works:
-        print(type(work_date))
         if work_date >= treshold:
             handled_works.append(work_date)
     return handled_works

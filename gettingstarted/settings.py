@@ -143,7 +143,7 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 DAYS_ON_PAGE = 30
 DAYS_WITH_SHEDULE = 10
 
-MIN_X = 1
+MIN_X = (1 + DAYS_WITH_SHEDULE)
 MIN_Y = 2
 
 STATES = ["indifferently", "not_want", "want", "work"]
