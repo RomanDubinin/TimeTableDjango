@@ -143,3 +143,6 @@ DAYS_WITH_SHEDULE = 10
 
 MIN_X = 1
 MIN_Y = 2
+
+STATES = ["indifferently", "not_want", "want"]
+STATES_COUNT = len(STATES)

@@ -34,7 +34,7 @@
       </td>
       {% for day in user.getdays %}
         <td>
-          {{ day }}
+          <span class="want">{{ day }}</span>
         </td>
       {% endfor %}
     </tr>
@@ -60,9 +60,18 @@ function send_coords(x, y) {
         // handle a successful response
         success : function(json) {
             table = document.getElementById('timetable');
-            if((x >= {{MIN_X}}) && (y >= {{MIN_Y}}))
-              table.rows[y].cells[x].innerHTML = Math.floor(table.rows[y].cells[x].innerHTML) + 1;
+            cell = table.rows[y].cells[x].getElementsByTagName('span')[0]
+            if((x >= json.MIN_X) && (y >= json.MIN_Y)){
+              cell.innerHTML = (Math.floor(cell.innerHTML) + 1) % json.STATES_COUNT;
+            }
+            
+            cell = table.rows[y].cells[x].getElementsByTagName('span')[0]
+            if((x >= json.MIN_X) && (y >= json.MIN_Y)){
+              console.log(json.STATE)
+              console.log(cell.className)
 
+              cell.className = json.STATE;
+            }
             
             //location.reload();
         },

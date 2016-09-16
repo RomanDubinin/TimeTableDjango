@@ -8,6 +8,8 @@ from .models import UserSkif
 
 from django.conf import settings
 
+import json
+
 # Create your views here.
 def index(request):
     form = Calendar()
@@ -28,9 +30,34 @@ def index(request):
         if x >= settings.MIN_X and y >= settings.MIN_Y:
             user = form.users[y-2]
             days = user.getdays()
-            days[x-1] += 1
+            days[x-1] = (days[x-1] + 1) % settings.STATES_COUNT
             user.setdays(days)
             user.save()
             form.users = UserSkif.objects.all()
     
-    return render(request, 'index.html', {'form': form, 'MIN_X':settings.MIN_X, 'MIN_Y':settings.MIN_Y})
+        # return render(request, 
+        #               'index.html', 
+        #               { 'form': form, 
+        #                 'MIN_X':settings.MIN_X, 
+        #                 'MIN_Y':settings.MIN_Y, 
+        #                 'STATE': settings.STATES[days[x-1]],
+        #                 'STATES_COUNT': settings.STATES_COUNT,
+        #               })
+        response_data = {'MIN_X':settings.MIN_X, 
+                        'MIN_Y':settings.MIN_Y, 
+                        'STATE': settings.STATES[days[x-1]],
+                        'STATES_COUNT': settings.STATES_COUNT,
+                        }
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json"
+        )
+
+    return render(request, 
+                  'index.html', 
+                  { 'form': form, 
+                    'MIN_X':settings.MIN_X, 
+                    'MIN_Y':settings.MIN_Y,
+                    'STATE': "1",
+                    'STATES_COUNT': settings.STATES_COUNT,
+                  })
