@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from .forms import Calendar
 from .models import UserSkif
+from .models import StorableDate
 
 from django.conf import settings
 
@@ -14,7 +15,10 @@ import json
 def index(request):
     form = Calendar()
 
-    date = datetime(year=2016, month=3, day=17)
+    stored_date = list(StorableDate.objects.all())[0]
+    date = datetime(year=stored_date.year, 
+                    month=stored_date.month, 
+                    day=stored_date.day)
 
     form.days = []
     for i in range(settings.DAYS_ON_PAGE):
@@ -32,15 +36,15 @@ def index(request):
         response_data = {}
         if x >= settings.MIN_X and y >= settings.MIN_Y:
             user = form.users[y-2]
-            days = user.getdays()
-            days[x-1] = (days[x-1] + 1) % settings.STATES_COUNT
-            user.setdays(days)
+            choises = user.get_choises()
+            choises[x-1] = (choises[x-1] + 1) % settings.STATES_COUNT
+            user.set_choises(choises)
             user.save()
             form.users = UserSkif.objects.all()
     
             response_data = {'MIN_X':settings.MIN_X, 
                             'MIN_Y':settings.MIN_Y, 
-                            'STATE': settings.STATES[days[x-1]],
+                            'STATE': settings.STATES[choises[x-1]],
                             'STATES_COUNT': settings.STATES_COUNT,
                             }
 
@@ -50,8 +54,8 @@ def index(request):
         )
 
     for user in form.users:
-        states = numbers_to_stetes(user.getdays(), settings.STATES)
-        user.setdays(states)
+        states = numbers_to_stetes(user.get_choises(), settings.STATES)
+        user.set_choises(states)
 
     return render(request, 
                   'index.html', 
@@ -63,34 +67,45 @@ def index(request):
                   })
 
 def new_day(request):
+    generate_new_day()
+    return index(request)
+
+def generate_new_day():
     users = list(UserSkif.objects.all())
-    today = datetime.now()
+
+    stored_date = list(StorableDate.objects.all())[0]
+    today = datetime(year=stored_date.year, 
+                     month=stored_date.month, 
+                     day=stored_date.day)
 
     users.sort(key = last_works_count)
-    wants =          [user for user in users if settings.STATES[user.getdays()[settings.DAYS_WITH_SHEDULE]] == "want"]
-    indifferentlys = [user for user in users if settings.STATES[user.getdays()[settings.DAYS_WITH_SHEDULE]] == "indifferently"]
+    wants =          [user for user in users if settings.STATES[user.get_choises()[settings.DAYS_WITH_SHEDULE]] == "want"]
+    indifferentlys = [user for user in users if settings.STATES[user.get_choises()[settings.DAYS_WITH_SHEDULE]] == "indifferently"]
     sorted_users = wants + indifferentlys
 
     for user in sorted_users[:2]:
-        days = user.getdays()
-        days[settings.DAYS_WITH_SHEDULE] = settings.WORK_STATE
-        user.setdays(days)
+        choises = user.get_choises()
+        choises[settings.DAYS_WITH_SHEDULE] = settings.WORK_STATE
+        user.set_choises(choises)
         user.save()
 
     for user in users:
         last_works = user.get_last_works()
-        if user.getdays()[0] == settings.WORK_STATE:
+        if user.get_choises()[0] == settings.WORK_STATE:
             last_works.append(today)
 
         handled_works = drop_very_last_works(last_works, today - settings.PERIOD_TO_STORAGE_WORKS)
         user.set_last_works(handled_works)
 
-        days = user.getdays()
-        user.setdays(shift(days))
+        choises = user.get_choises()
+        user.set_choises(shift(choises))
         user.save()
 
-    return index(request)
-
+    today = today + timedelta(days=1)
+    stored_date.year = today.year
+    stored_date.month = today.month
+    stored_date.day = today.day
+    stored_date.save()
 
 
 

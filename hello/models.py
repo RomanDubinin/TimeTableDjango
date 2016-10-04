@@ -8,14 +8,14 @@ from datetime import datetime
 
 class UserSkif(models.Model):
     name = models.CharField(max_length=100)
-    days = models.CharField(max_length=1000, default='[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]')
+    choises = models.CharField(max_length=1000, default='[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]')
     last_works = models.CharField(max_length=100000, default='[]')
 
-    def setdays(self, x):
-        self.days = json.dumps(x)
+    def set_choises(self, x):
+        self.choises = json.dumps(x)
 
-    def getdays(self):
-        return json.loads(self.days)
+    def get_choises(self):
+        return json.loads(self.choises)
 
     def set_last_works(self, dates):
         strs = []
@@ -31,3 +31,8 @@ class UserSkif(models.Model):
             dates.append(datetime.strptime(string, "%Y-%m-%d"))
 
         return dates
+
+class StorableDate(models.Model):
+    year = models.IntegerField()
+    month = models.IntegerField()
+    day = models.IntegerField()
