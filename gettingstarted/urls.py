@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^$', hello.views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^new_day/$', hello.views.new_day, name='new'),
+    url(r'^last/$', hello.views.last, name='last'),
 ]

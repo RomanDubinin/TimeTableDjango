@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="jumbotron text-center">
+  <div class="container">
+    <h1>Журнал</h1>
+  </div>
+</div>
+
+<table>
+  <tr>
+    <td>...</td>
+
+        {% for date in form.dates %}
+          <td>{{ date.month }} {{date.day}}</td>
+        {% endfor %}
+  </tr>
+
+  {% for user in form.users %}
+    <tr>
+      <td style="position: fixed; background-color: #fafafa;">
+        {{ user.name }}
+      </td>
+      {% for guide_mark in user.last_work_guide_mark %}
+        <td>
+          <span class={{ guide_mark }}></span>
+        </td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+
+</table>
+{{settings.MIN_X}}
+{% endblock %}

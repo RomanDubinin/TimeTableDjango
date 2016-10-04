@@ -54,16 +54,42 @@ def index(request):
         )
 
     for user in form.users:
-        states = numbers_to_stetes(user.get_choises(), settings.STATES)
+        choises = user.get_choises()
+        states = [settings.STATES[choise] for choise in choises]
         user.set_choises(states)
 
     return render(request, 
                   'index.html', 
                   { 'form': form, 
-                    'MIN_X':settings.MIN_X, 
-                    'MIN_Y':settings.MIN_Y,
-                    'STATE': "1",
-                    'STATES_COUNT': settings.STATES_COUNT,
+                  })
+
+def last(request):
+    form = Calendar()
+
+    stored_date = list(StorableDate.objects.all())[0]
+    last_date = datetime(year=stored_date.year, 
+                    month=stored_date.month, 
+                    day=stored_date.day)
+
+    first_date = last_date - settings.PERIOD_TO_STORAGE_WORKS
+    
+    form.dates = get_dates_list(first_date, last_date, timedelta(days=1))
+    form.users = list(UserSkif.objects.all())
+    form.users.sort(key = user_name)
+
+    for user in form.users:
+        user.last_work_guide_mark = []
+        for date in form.dates:
+            his_last_works = user.get_last_works()
+            if date in his_last_works:
+                user.last_work_guide_mark.append(settings.WORK_STATE_NUM)
+            else:
+                user.last_work_guide_mark.append(0)
+        user.last_work_guide_mark = [settings.STATES[guide_mark] for guide_mark in user.last_work_guide_mark]
+
+    return render(request, 
+                  'last.html', 
+                  { 'form': form,
                   })
 
 def new_day(request):
@@ -85,13 +111,13 @@ def generate_new_day():
 
     for user in sorted_users[:2]:
         choises = user.get_choises()
-        choises[settings.DAYS_WITH_SHEDULE] = settings.WORK_STATE
+        choises[settings.DAYS_WITH_SHEDULE] = settings.WORK_STATE_NUM
         user.set_choises(choises)
         user.save()
 
     for user in users:
         last_works = user.get_last_works()
-        if user.get_choises()[0] == settings.WORK_STATE:
+        if user.get_choises()[0] == settings.WORK_STATE_NUM:
             last_works.append(today)
 
         handled_works = drop_very_last_works(last_works, today - settings.PERIOD_TO_STORAGE_WORKS)
@@ -108,12 +134,14 @@ def generate_new_day():
     stored_date.save()
 
 
+def get_dates_list(first_date, last_date, timedelta):
+    result = []
+    current = first_date
 
-def numbers_to_stetes(arr, states):
-    res = []
-    for i in range(len(arr)):
-        res.append(states[arr[i]])
-    return res
+    while current <= last_date:
+        result.append(current)
+        current += timedelta
+    return result
 
 def drop_very_last_works(works, treshold):
     handled_works = []

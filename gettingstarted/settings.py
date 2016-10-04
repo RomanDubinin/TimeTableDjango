@@ -148,5 +148,5 @@ MIN_Y = 2
 
 STATES = ["indifferently", "not_want", "want", "work"]
 STATES_COUNT = (len(STATES) - 1)
-WORK_STATE = (len(STATES) - 1)
+WORK_STATE_NUM = (len(STATES) - 1)
 PERIOD_TO_STORAGE_WORKS = timedelta(days = 120)
